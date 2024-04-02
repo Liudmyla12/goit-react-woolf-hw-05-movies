@@ -13,17 +13,26 @@ const Movies = () => {
   const movieName = searchParams.get('query') || '';
 
   const updateQueryString = query => {
-    const nextParams = query !== '' && { query };
-    setSearchParams(nextParams);
+    // Перевірка на порожній рядок
+    if (query.trim() !== '') {
+      setSearchParams({ query });
+    } else {
+      setSearchParams({});
+    }
   };
 
   useEffect(() => {
     const search = async () => {
       try {
         setLoading(true);
-        const movies = await fetchSearchByKeyword(movieName);
-        setSearchFilms(movies);
-        setNoMoviesText(movies.length === 0);
+        if (movieName) {
+          const movies = await fetchSearchByKeyword(movieName);
+          setSearchFilms(movies);
+          setNoMoviesText(movies.length === 0);
+        } else {
+          setSearchFilms([]);
+          setNoMoviesText(false);
+        }
       } catch (error) {
         console.error(error);
       } finally {
